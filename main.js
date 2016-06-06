@@ -1,6 +1,6 @@
+
 var randomX = d3.random.normal(500, 100);
 var randomY = d3.random.normal(500, 100);
-var string = "query goes here"
 
 var data = d3.range(50).map(_ => ({
   x: randomX(),
@@ -14,6 +14,15 @@ var svg = d3.select("body")
             .attr("width", 1000)
             .attr("height", 1000);
 
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<span class='tooltip'>" + d.label + "</span>";
+  })
+
+svg.call(tip);
+
 svg.selectAll("circle")
   .data(data)
   .enter()
@@ -21,15 +30,8 @@ svg.selectAll("circle")
   .attr("cx", d => d.x)
   .attr("cy", d => d.y)
   .attr("r", 10)
-  .attr("fill", d => d.value ? "green" : "red");
-
-
- svg.selectAll("text")
-  .data(data)
-  .enter()
-  .append("text")
-  .text(d => d.label)
-  .attr('x', d => d.x)
-  .attr('y', d => d.y)
-  .attr("font-family", "Open Sans")
-  .attr("font-size", "11px");
+  .attr("class", d => "query-point " + (d.value ? "positive" : "negative"))
+  .attr("stroke", "black")
+  .attr("stroke-width", 1)
+  .on('mouseover', tip.show)
+  .on('mouseout', tip.hide)
